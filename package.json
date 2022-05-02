@@ -9,7 +9,7 @@
   "author": "",
   "license": "",
   "devDependencies": {
-    "@figma/plugin-typings": "*",
+    "@figma/plugin-typings": "^1.45.0",
     "typescript": "*"
   }
 }
