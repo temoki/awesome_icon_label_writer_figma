@@ -1,7 +1,7 @@
 {
-  "name": "awesome_icon_label_writer",
+  "name": "awesome_icon_label_writer_figma",
   "version": "0.1.0",
-  "description": "If the text nodes on the current page are Font Awesome icons, this plugin changes the node name to icon name and Unicode.",
+  "description": "This Figma plugin renames text nodes consisting of one Font Awesome icon to the icon name.",
   "main": "code.js",
   "scripts": {
     "build": "tsc -p tsconfig.json"

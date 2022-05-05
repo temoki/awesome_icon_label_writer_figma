@@ -40,7 +40,7 @@ function findAllRenamableNodes(): Result {
         iconName = faIcons6.get(unicode) ?? iconName
         break
     }
-    const newName = `[FA] ${iconName} / ${unicode}`
+    const newName = `[FA${fontAwesomeVersion}] ${iconName} / ${unicode}`
     if (node.name === newName) break
 
     result.focusNodes.push(node)
