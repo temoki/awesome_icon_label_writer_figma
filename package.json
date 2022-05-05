@@ -1,12 +1,12 @@
 {
-  "name": "FAP",
-  "version": "1.0.0",
-  "description": "Your Figma Plugin",
+  "name": "awesome_icon_label_writer",
+  "version": "0.1.0",
+  "description": "If the text nodes on the current page are Font Awesome icons, this plugin changes the node name to icon name and Unicode.",
   "main": "code.js",
   "scripts": {
     "build": "tsc -p tsconfig.json"
   },
-  "author": "",
+  "author": "@temoki",
   "license": "",
   "devDependencies": {
     "@figma/plugin-typings": "^1.45.0",

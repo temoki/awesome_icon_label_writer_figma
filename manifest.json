@@ -1,9 +1,10 @@
 {
-  "name": "FAP",
+  "name": "Awesome Icon Label Writer",
   "id": "1102932721330215858",
   "api": "1.0.0",
   "main": "code.js",
   "editorType": [
     "figma"
-  ]
+  ],
+  "ui": "ui.html"
 }

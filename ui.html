@@ -1,0 +1,55 @@
+<p id="message"></p>
+<button id="ok">OK</button>
+<button id="cancel">キャンセル</button>
+<script>
+var lastPluginMessage = { type: 'none' }
+
+document.getElementById('ok').onclick = () => {
+    switch (lastPluginMessage.type) {
+        case 'renamable-nodes-found':
+            parent.postMessage({ pluginMessage: { type: 'rename', renamableNodes: lastPluginMessage.renamableNodes } }, '*')
+            break
+
+        case 'renamable-nodes-not-found':
+        case 'renamed':
+            parent.postMessage({ pluginMessage: { type: 'exit' } }, '*')
+            break
+
+        default:
+    }
+}
+
+document.getElementById('cancel').onclick = () => {
+    switch (lastPluginMessage.type) {
+        case 'renamable-nodes-found':
+            parent.postMessage({ pluginMessage: { type: 'exit' } }, '*')
+            break
+
+        default:
+    }
+}
+
+onmessage = (event) => {
+    const pluginMessage = event.data.pluginMessage
+    switch (pluginMessage.type) {
+        case 'renamable-nodes-found':
+            document.getElementById('message').innerText = `Font Awesomeのアイコン1つで構成されるテキストノードが${pluginMessage.renamableNodes.length}個見つかりました。ノード名を "[FA] {Icon name} / {Unicode}" に変更してもよろしいですか？`
+            document.getElementById('ok').style.visibility = 'visible'
+            document.getElementById('cancel').style.visibility = 'visible'
+            break
+        
+        case 'renamable-nodes-not-found':
+            document.getElementById('message').innerText = `テキストノード見つかりませんでした。`
+            document.getElementById('ok').style.visibility = 'visible'
+            document.getElementById('cancel').style.visibility = 'hidden'
+
+        case 'renamed':
+            document.getElementById('message').innerText = `${pluginMessage.count}個のテキストノードの名前を変更しました。`
+            document.getElementById('ok').style.visibility = 'visible'
+            document.getElementById('cancel').style.visibility = 'hidden'
+        
+        default:
+    }
+    lastPluginMessage = pluginMessage
+}
+</script>
