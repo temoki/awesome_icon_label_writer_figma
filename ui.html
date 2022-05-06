@@ -42,11 +42,13 @@ onmessage = (event) => {
             document.getElementById('message').innerText = 'The text node was not found.'
             document.getElementById('ok').style.visibility = 'visible'
             document.getElementById('cancel').style.visibility = 'hidden'
+            break
 
         case 'renamed':
         document.getElementById('message').innerText = `Renamed ${pluginMessage.count} text nodes.`
             document.getElementById('ok').style.visibility = 'visible'
             document.getElementById('cancel').style.visibility = 'hidden'
+            break
         
         default:
     }
