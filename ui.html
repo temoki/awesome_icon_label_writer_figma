@@ -2,56 +2,56 @@
 <button id="ok">OK</button>
 <button id="cancel">Cancel</button>
 <script>
-var lastPluginMessage = { type: 'none' }
+    var lastPluginMessage = { type: 'none' }
 
-document.getElementById('ok').onclick = () => {
-    switch (lastPluginMessage.type) {
-        case 'renamable-nodes-found':
-            parent.postMessage({ pluginMessage: { type: 'rename', renamableNodes: lastPluginMessage.renamableNodes } }, '*')
-            break
+    document.getElementById('ok').onclick = () => {
+        switch (lastPluginMessage.type) {
+            case 'renamable-nodes-found':
+                parent.postMessage({ pluginMessage: { type: 'rename', renamableNodes: lastPluginMessage.renamableNodes } }, '*')
+                break
 
-        case 'renamable-nodes-not-found':
-        case 'renamed':
-            parent.postMessage({ pluginMessage: { type: 'exit' } }, '*')
-            break
+            case 'renamable-nodes-not-found':
+            case 'renamed':
+                parent.postMessage({ pluginMessage: { type: 'exit' } }, '*')
+                break
 
-        default:
+            default:
+        }
     }
-}
 
-document.getElementById('cancel').onclick = () => {
-    switch (lastPluginMessage.type) {
-        case 'renamable-nodes-found':
-            parent.postMessage({ pluginMessage: { type: 'exit' } }, '*')
-            break
+    document.getElementById('cancel').onclick = () => {
+        switch (lastPluginMessage.type) {
+            case 'renamable-nodes-found':
+                parent.postMessage({ pluginMessage: { type: 'exit' } }, '*')
+                break
 
-        default:
+            default:
+        }
     }
-}
 
-onmessage = (event) => {
-    const pluginMessage = event.data.pluginMessage
-    switch (pluginMessage.type) {
-        case 'renamable-nodes-found':
-            document.getElementById('message').innerText = `${pluginMessage.renamableNodes.length} text nodes consisting of one Font Awesome icon were found. Are you sure you want to change the node name to the icon name?`
-            document.getElementById('ok').style.visibility = 'visible'
-            document.getElementById('cancel').style.visibility = 'visible'
-            break
-        
-        case 'renamable-nodes-not-found':
-            document.getElementById('message').innerText = 'The text node was not found.'
-            document.getElementById('ok').style.visibility = 'visible'
-            document.getElementById('cancel').style.visibility = 'hidden'
-            break
+    onmessage = (event) => {
+        const pluginMessage = event.data.pluginMessage
+        switch (pluginMessage.type) {
+            case 'renamable-nodes-found':
+                document.getElementById('message').innerText = `${pluginMessage.renamableNodes.length} text nodes consisting of one Font Awesome icon were found. Are you sure you want to change the node name to the icon name?`
+                document.getElementById('ok').style.visibility = 'visible'
+                document.getElementById('cancel').style.visibility = 'visible'
+                break
 
-        case 'renamed':
-        document.getElementById('message').innerText = `Renamed ${pluginMessage.count} text nodes.`
-            document.getElementById('ok').style.visibility = 'visible'
-            document.getElementById('cancel').style.visibility = 'hidden'
-            break
-        
-        default:
+            case 'renamable-nodes-not-found':
+                document.getElementById('message').innerText = 'The text node was not found.'
+                document.getElementById('ok').style.visibility = 'visible'
+                document.getElementById('cancel').style.visibility = 'hidden'
+                break
+
+            case 'renamed':
+                document.getElementById('message').innerText = `Renamed ${pluginMessage.count} text nodes.`
+                document.getElementById('ok').style.visibility = 'visible'
+                document.getElementById('cancel').style.visibility = 'hidden'
+                break
+
+            default:
+        }
+        lastPluginMessage = pluginMessage
     }
-    lastPluginMessage = pluginMessage
-}
 </script>
