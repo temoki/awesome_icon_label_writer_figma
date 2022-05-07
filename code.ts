@@ -14,28 +14,28 @@ interface Result {
 
 function findAllRenamableNodes(): Result {
   const result: Result = { focusNodes: [], renamableNodes: [] }
-  for (const node of figma.currentPage.findAll((node) => node.type === "TEXT")) {
+  for (const node of figma.currentPage.findAll((node) => node.type === 'TEXT')) {
     const textNode = node as TextNode
     if (textNode.characters.length !== 1) continue
 
     const fontFamilySegments = (textNode.getRangeFontName(0, 1) as FontName).family.split(" ")
     if (fontFamilySegments.length < 2) continue
-    if (!(fontFamilySegments[0] === "Font" && fontFamilySegments[1] === "Awesome")) continue
+    if (!(fontFamilySegments[0] === 'Font' && fontFamilySegments[1] === 'Awesome')) continue
 
-    var fontAwesomeVersion = "?"
+    var fontAwesomeVersion = '?'
     if (fontFamilySegments.length > 2) {
       fontAwesomeVersion = fontFamilySegments[2]
     }
 
     const unicode = textNode.characters.charCodeAt(0).toString(16)
 
-    var iconName = "?"
+    var iconName = '?'
     switch (fontAwesomeVersion) {
-      case "5":
+      case '5':
         iconName = faIcons5.get(unicode) ?? iconName
         break
 
-      case "6":
+      case '6':
       default:
         iconName = faIcons6.get(unicode) ?? iconName
         break
