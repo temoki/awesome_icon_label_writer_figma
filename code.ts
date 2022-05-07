@@ -16,11 +16,11 @@ function findAllRenamableNodes(): Result {
   const result: Result = { focusNodes: [], renamableNodes: [] }
   for (const node of figma.currentPage.findAll((node) => node.type === "TEXT")) {
     const textNode = node as TextNode
-    if (textNode.characters.length !== 1) break
+    if (textNode.characters.length !== 1) continue
   
     const fontFamilySegments = (textNode.getRangeFontName(0, 1) as FontName).family.split(" ")
-    if (fontFamilySegments.length < 2) break
-    if (!(fontFamilySegments[0] === "Font" && fontFamilySegments[1] === "Awesome")) break
+    if (fontFamilySegments.length < 2) continue
+    if (!(fontFamilySegments[0] === "Font" && fontFamilySegments[1] === "Awesome")) continue
   
     var fontAwesomeVersion = "?"
     if (fontFamilySegments.length > 2) {
@@ -41,7 +41,7 @@ function findAllRenamableNodes(): Result {
         break
     }
     const newName = `[FA${fontAwesomeVersion}] ${iconName} / ${unicode}`
-    if (node.name === newName) break
+    if (node.name === newName) continue
 
     result.focusNodes.push(node)
     result.renamableNodes.push({nodeId: node.id, newName: newName})
