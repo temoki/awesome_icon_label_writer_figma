@@ -45,7 +45,6 @@ function findAllRenamableNodes(): Result {
   } else {
     textNodes = findTextNodesInCurrentPage()
   }
-  console.log(textNodes)
 
   for (const textNode of textNodes) {
     if (textNode.characters.length !== 1) continue
