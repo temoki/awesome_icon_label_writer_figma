@@ -12,10 +12,42 @@ interface Result {
   renamableNodes: RenamableNode[]
 }
 
+function findTextNodes(node: SceneNode): TextNode[] {
+  if (node.type === 'TEXT') {
+    return [node]
+  } else if ('children' in node && node.type !== 'INSTANCE') {
+    var textNodes: TextNode[] = []
+    for (const child of node.children) {
+      textNodes = textNodes.concat(findTextNodes(child))
+    }
+    return textNodes
+  }
+}
+
+function findTextNodesInSelection(): TextNode[] {
+  var textNodes: TextNode[] = []
+  for (const node of figma.currentPage.selection) {
+    textNodes = textNodes.concat(findTextNodes(node))
+  }
+  return textNodes
+}
+
+function findTextNodesInCurrentPage(): TextNode[] {
+  return figma.currentPage.findAll((node) => node.type === 'TEXT') as TextNode[]
+}
+
 function findAllRenamableNodes(): Result {
   const result: Result = { focusNodes: [], renamableNodes: [] }
-  for (const node of figma.currentPage.findAll((node) => node.type === 'TEXT')) {
-    const textNode = node as TextNode
+
+  var textNodes: TextNode[] = []
+  if (figma.currentPage.selection.length > 0) {
+    textNodes = findTextNodesInSelection()
+  } else {
+    textNodes = findTextNodesInCurrentPage()
+  }
+  console.log(textNodes)
+
+  for (const textNode of textNodes) {
     if (textNode.characters.length !== 1) continue
 
     const fontFamilySegments = (textNode.getRangeFontName(0, 1) as FontName).family.split(" ")
@@ -41,10 +73,10 @@ function findAllRenamableNodes(): Result {
         break
     }
     const newName = `[FA${fontAwesomeVersion}] ${iconName} / ${unicode}`
-    if (node.name === newName) continue
+    if (textNode.name === newName) continue
 
-    result.focusNodes.push(node)
-    result.renamableNodes.push({ nodeId: node.id, newName: newName })
+    result.focusNodes.push(textNode)
+    result.renamableNodes.push({ nodeId: textNode.id, newName: newName })
   }
   return result
 }
