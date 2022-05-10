@@ -12,39 +12,32 @@ interface Result {
   renamableNodes: RenamableNode[]
 }
 
-function findTextNodes(node: SceneNode): TextNode[] {
+function findDescendantsTextNodes(node: SceneNode): TextNode[] {
   if (node.type === 'TEXT') {
     return [node]
   } else if ('children' in node && node.type !== 'INSTANCE') {
     var textNodes: TextNode[] = []
     for (const child of node.children) {
-      textNodes = textNodes.concat(findTextNodes(child))
+      textNodes = textNodes.concat(findDescendantsTextNodes(child))
     }
     return textNodes
   }
 }
 
-function findTextNodesInSelection(): TextNode[] {
+function findAllTextNodesInSelection(): TextNode[] {
   var textNodes: TextNode[] = []
   for (const node of figma.currentPage.selection) {
-    textNodes = textNodes.concat(findTextNodes(node))
+    textNodes = textNodes.concat(findDescendantsTextNodes(node))
   }
   return textNodes
 }
 
-function findTextNodesInCurrentPage(): TextNode[] {
+function findAllTextNodesInCurrentPage(): TextNode[] {
   return figma.currentPage.findAll((node) => node.type === 'TEXT') as TextNode[]
 }
 
-function findAllRenamableNodes(): Result {
+function filterRenamableTextNodes(textNodes: TextNode[]): Result {
   const result: Result = { focusNodes: [], renamableNodes: [] }
-
-  var textNodes: TextNode[] = []
-  if (figma.currentPage.selection.length > 0) {
-    textNodes = findTextNodesInSelection()
-  } else {
-    textNodes = findTextNodesInCurrentPage()
-  }
 
   for (const textNode of textNodes) {
     if (textNode.characters.length !== 1) continue
@@ -82,15 +75,14 @@ function findAllRenamableNodes(): Result {
 
 figma.showUI(__html__)
 
-const result = findAllRenamableNodes()
+const isSelectionMode = figma.currentPage.selection.length > 0
+const textNodes = isSelectionMode ? findAllTextNodesInSelection() : findAllTextNodesInCurrentPage()
+const result = filterRenamableTextNodes(textNodes)
 if (result.focusNodes.length > 0) {
   figma.currentPage.selection = result.focusNodes
   figma.viewport.scrollAndZoomIntoView(result.focusNodes)
-
-  figma.ui.postMessage({ type: 'renamable-nodes-found', renamableNodes: result.renamableNodes })
-} else {
-  figma.ui.postMessage({ type: 'renamable-nodes-not-found' })
 }
+figma.ui.postMessage({ type: 'renamable-nodes-found', renamableNodes: result.renamableNodes, isSelectionMode: isSelectionMode })
 
 figma.ui.onmessage = (message) => {
   switch (message.type) {
