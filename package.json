@@ -7,7 +7,7 @@
     "build": "tsc -p tsconfig.json"
   },
   "author": "@temoki",
-  "license": "",
+  "license": "MIT",
   "devDependencies": {
     "@figma/plugin-typings": "^1.45.0",
     "typescript": "^4.6.4"
