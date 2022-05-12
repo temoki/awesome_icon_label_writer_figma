@@ -15,13 +15,14 @@ interface Result {
 function findDescendantsTextNodes(node: SceneNode): TextNode[] {
   if (node.type === 'TEXT') {
     return [node]
-  } else if ('children' in node && node.type !== 'INSTANCE') {
+  } else if ('children' in node) {
     var textNodes: TextNode[] = []
     for (const child of node.children) {
       textNodes = textNodes.concat(findDescendantsTextNodes(child))
     }
     return textNodes
   }
+  return []
 }
 
 function findAllTextNodesInSelection(): TextNode[] {
