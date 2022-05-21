@@ -5,6 +5,7 @@
   "main": "dist/code.js",
   "scripts": {
     "build": "webpack",
+    "watch": "webpack --watch",
     "codegen": "node codegen.js"
   },
   "author": "@temoki",
