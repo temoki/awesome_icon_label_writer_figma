@@ -16,13 +16,13 @@ function conv(name, url) {
             res.on('data', (chunk) => data += chunk)
             res.on('end', () => {
                 const json = JSON.parse(data)
-                var output = `const ${name} = new Map([`
+                var output = `export const icons = new Map<string,string>([`
                 Object.keys(json).forEach((iconName) => {
                     const unicode = json[iconName].unicode
-                    output += `  ["${unicode}","${iconName}"],`
+                    output += `["${unicode}","${iconName}"],`
                 })
-                output += "])"
-                fs.writeFileSync(`${name}.js`, output)
+                output += '])'
+                fs.writeFileSync(`./src/icons_${name}.ts`, output)
             })
             return
         }
@@ -32,5 +32,5 @@ function conv(name, url) {
     })
 }
 
-conv("faIcons6", "https://github.com/FortAwesome/Font-Awesome/raw/6.x/metadata/icons.json")
-conv("faIcons5", "https://github.com/FortAwesome/Font-Awesome/raw/5.x/metadata/icons.json")
+conv("fa6", "https://github.com/FortAwesome/Font-Awesome/raw/6.x/metadata/icons.json")
+conv("fa5", "https://github.com/FortAwesome/Font-Awesome/raw/5.x/metadata/icons.json")

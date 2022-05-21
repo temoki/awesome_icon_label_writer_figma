@@ -2,9 +2,7 @@
   "name": "Awesome Icon Label Writer",
   "id": "1103997525630191469",
   "api": "1.0.0",
-  "main": "code.js",
-  "editorType": [
-    "figma"
-  ],
-  "ui": "ui.html"
+  "editorType": ["figma"],
+  "main": "dist/code.js",
+  "ui": "dist/ui.html"
 }

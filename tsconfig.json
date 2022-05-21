@@ -8,5 +8,8 @@
       "./node_modules/@types",
       "./node_modules/@figma"
     ]
-  }
+  },
+  "include": [
+    "src/**/*.ts"
+  ]
 }
