@@ -1,3 +1,4 @@
+// Generate a map with key as unicode and value as icon name from Font Awesome meta data.
 'use strict';
 const fs = require('fs');
 const https = require('https'); 
