@@ -5,12 +5,12 @@ This Figma plugin renames text nodes consisting of one Font Awesome icon to the 
 ![](assets/screen-recording.gif)
 
 Text nodes will be renamed as 
-`[FA{Font Awesome version}] {Icon name} / {Unicode}`.
+`[FA{version}-{style}] {icon name} / {unicode}`.
 
 The followings are examples.
 
-- `[FA5] lemon / f094`
-- `[FA6] credit-card / f09d`
+- `[FA5-Regular] lemon / f094`
+- `[FA6-Solid] credit-card / f09d`
 
 You run the plugin, all the icons on the current page will be renamed.
 If you select some nodes and then run the plug-in, the icons in the selected node and its descendants will be renamed.
