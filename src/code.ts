@@ -42,7 +42,8 @@ function filterRenamableTextNodes(textNodes: TextNode[]): Result {
   for (const textNode of textNodes) {
     if (textNode.characters.length !== 1) continue
 
-    const fontFamilySegments = (textNode.getRangeFontName(0, 1) as FontName).family.split(" ")
+    const font = textNode.getRangeFontName(0, 1) as FontName
+    const fontFamilySegments = font.family.split(" ")
     if (fontFamilySegments.length < 2) continue
     if (!(fontFamilySegments[0] === 'Font' && fontFamilySegments[1] === 'Awesome')) continue
 
@@ -64,7 +65,7 @@ function filterRenamableTextNodes(textNodes: TextNode[]): Result {
         iconName = fa6.get(unicode) ?? iconName
         break
     }
-    const newName = `[FA${fontAwesomeVersion}] ${iconName} / ${unicode}`
+    const newName = `[FA${fontAwesomeVersion}-${font.style}] ${iconName} / ${unicode}`
     if (textNode.name === newName) continue
 
     result.focusNodes.push(textNode)
@@ -73,7 +74,7 @@ function filterRenamableTextNodes(textNodes: TextNode[]): Result {
   return result
 }
 
-figma.showUI(__html__)
+figma.showUI(__html__, {width:300, height: 200})
 
 const isSelectionMode = figma.currentPage.selection.length > 0
 const textNodes = isSelectionMode ? findAllTextNodesInSelection() : findAllTextNodesInCurrentPage()
