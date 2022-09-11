@@ -1,5 +1,5 @@
 import { icons as fa5 } from './icons_fa5'
-import { icons as fa6 } from './icons_fa5'
+import { icons as fa6 } from './icons_fa6'
 
 interface RenamableNode {
   nodeId: string
