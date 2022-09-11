@@ -1,6 +1,80 @@
-<p id="message"></p>
-<button id="ok">OK</button>
-<button id="cancel">Cancel</button>
+<style type='text/css'>
+body {
+    margin: 0px;
+}
+
+p {
+    font: 12px sans-serif;
+    text-align: left;
+    line-height: 1.5em;
+    margin: 0px;
+}
+
+button {
+    border-radius: 4px;
+    font: bold 12px sans-serif;
+    padding: 8px 16px;
+}
+
+.base-container {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    padding-left: 16px;
+    padding-right: 16px;
+    height: 100%;
+}
+
+.messages-container {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    margin-top: 16px;
+    margin-bottom: auto;
+}
+
+.actions-container {
+    display: flex;
+    flex-direction: row;
+    gap: 8px;
+    margin-top: auto;
+    margin-bottom: 16px;
+}
+
+.action-ok {
+    flex: 1;
+    background-color: #0E99FF;
+    color: #FFFFFF;
+    border: 1px solid #0E99FF;
+}
+.action-ok:hover {
+    background-color: #3DAEFF;
+    border: 1px solid #3DAEFF;
+}
+
+.action-cancel {
+    flex: 1;
+    background-color: #FFFFFF;
+    color: #0E99FF;
+    border: 1px solid #0E99FF;
+}
+.action-cancel:hover {
+    background-color: #F2F2F2;
+    border: 1px solid #3DAEFF;
+}
+</style>
+
+<div class='base-container'>
+    <div class='messages-container'>
+        <p id='message1'></p>
+        <p id='message2'></p>
+    </div>
+    <div class='actions-container'>
+        <button id='cancel' class='action-cancel'>Cancel</button>
+        <button id='ok' class='action-ok'>OK</button>
+    </div>
+</div>
+
 <script>
     var lastPluginMessage = { type: 'none' }
 
@@ -27,7 +101,8 @@
     }
 
     onmessage = (event) => {
-        const messageText = document.getElementById('message')
+        const message1Text = document.getElementById('message1')
+        const message2Text = document.getElementById('message2')
         const okButton = document.getElementById('ok')
         const cancelButton = document.getElementById('cancel')
 
@@ -38,23 +113,40 @@
                 const target = pluginMessage.isSelectionMode ? 'selection' : 'current page'
 
                 if (foundCount >= 2) {
-                    messageText.innerText = `${pluginMessage.renamableNodes.length} text nodes consisting of one Font Awesome icon were found in the ${target}.`
-                    messageText.innerText += '\nAre you sure you want to change the node name to the icon name?'
+                    message1Text.innerHTML = `<strong>${pluginMessage.renamableNodes.length}</strong> text nodes consisting of one Font Awesome icon were found in the ${target}.`
+                    message2Text.style.display = 'inline'
+                    message2Text.innerHTML += 'Are you sure you want to change these nodes name to the icon name?'
+                    okButton.innerText = 'Change'
                 } else if (foundCount == 1) {
-                    messageText.innerText = `A text node consisting of one Font Awesome icon was found in the ${target}.`
-                    messageText.innerText += '\nAre you sure you want to change these node name to the icon name?'
+                    message1Text.innerHTML = `One text node consisting of one Font Awesome icon was found in the ${target}.`
+                    message2Text.style.display = 'inline'
+                    message2Text.innerHTML += 'Are you sure you want to change the node name to the icon name?'
+                    okButton.innerText = 'Change'
                 } else {
-                    messageText.innerText = `No text nodes consisting of one Font Awesome icon were found in the ${target}.`
+                    message1Text.innerHTML = `No text nodes consisting of one Font Awesome icon were found in the ${target}.`
+                    message2Text.style.display = 'none'
+                    message2Text.innerHTML = ''
+                    okButton.innerText = 'OK'
                 }
 
                 okButton.style.visibility = 'visible'
-                cancelButton.style.visibility = (foundCount > 0) ? 'visible' : 'hidden'
+                cancelButton.style.display = (foundCount > 0) ? 'inline' : 'none'
                 break
 
             case 'renamed':
-                messageText.innerText = `Renamed ${pluginMessage.count} text nodes.`
-                okButton.style.visibility = 'visible'
-                cancelButton.style.visibility = 'hidden'
+                const renamedCount = pluginMessage.count
+                if (renamedCount >= 2) {
+                    message1Text.innerHTML = `<strong>${pluginMessage.count}</strong> text nodes have been renamed.`
+                } else if (renamedCount == 1) {
+                    message1Text.innerHTML = 'One text node has been renamed.'
+                } else {
+                    message1Text.innerHTML = 'No text nodes have been renamed.'
+                }
+                message2Text.style.visibility = 'hidden'
+                message2Text.innerHTML = ''
+                okButton.innerText = 'OK'
+                okButton.style.display = 'inline'
+                cancelButton.style.display = 'none'
                 break
 
             default:
