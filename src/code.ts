@@ -32,11 +32,12 @@ function findAllTextNodesInSelection(): TextNode[] {
   return textNodes
 }
 
-function findAllTextNodesInCurrentPage(): TextNode[] {
+async function findAllTextNodesInCurrentPage(): Promise<TextNode[]> {
+  await figma.currentPage.loadAsync()
   return figma.currentPage.findAll((node) => node.type === 'TEXT') as TextNode[]
 }
 
-function filterRenamableTextNodes(textNodes: TextNode[]): Result {
+async function filterRenamableTextNodes(textNodes: TextNode[]): Promise<Result> {
   const result: Result = { focusNodes: [], renamableNodes: [] }
 
   for (const textNode of textNodes) {
@@ -74,32 +75,35 @@ function filterRenamableTextNodes(textNodes: TextNode[]): Result {
   return result
 }
 
-figma.showUI(__html__, {width:300, height: 200})
+async function main() {
+  figma.showUI(__html__, {width:300, height: 200})
 
-const isSelectionMode = figma.currentPage.selection.length > 0
-const textNodes = isSelectionMode ? findAllTextNodesInSelection() : findAllTextNodesInCurrentPage()
-const result = filterRenamableTextNodes(textNodes)
-if (result.focusNodes.length > 0) {
-  figma.currentPage.selection = result.focusNodes
-  figma.viewport.scrollAndZoomIntoView(result.focusNodes)
-}
-figma.ui.postMessage({ type: 'renamable-nodes-found', renamableNodes: result.renamableNodes, isSelectionMode: isSelectionMode })
+  const isSelectionMode = figma.currentPage.selection.length > 0
+  const textNodes = isSelectionMode ? findAllTextNodesInSelection() : await findAllTextNodesInCurrentPage()
+  const result = await filterRenamableTextNodes(textNodes)
+  if (result.focusNodes.length > 0) {
+    figma.currentPage.selection = result.focusNodes
+    figma.viewport.scrollAndZoomIntoView(result.focusNodes)
+  }
+  figma.ui.postMessage({ type: 'renamable-nodes-found', renamableNodes: result.renamableNodes, isSelectionMode: isSelectionMode })
 
-figma.ui.onmessage = (message) => {
-  switch (message.type) {
-    case 'rename':
-      const renamableNodes = message.renamableNodes as RenamableNode[]
-      renamableNodes.forEach((renamableNode) => {
-        const node = figma.currentPage.findOne((it) => it.id === renamableNode.nodeId)
-        if (node !== null) {
-          node.name = renamableNode.newName
-        }
-      })
-      figma.ui.postMessage({ type: 'renamed', count: renamableNodes.length })
-      break
+  figma.ui.onmessage = async (message) => {
+    switch (message.type) {
+      case 'rename':
+        await figma.currentPage.loadAsync()
+        const renamableNodes = message.renamableNodes as RenamableNode[]
+        renamableNodes.forEach((renamableNode) => {
+          const node = figma.currentPage.findOne((it) => it.id === renamableNode.nodeId)
+          if (node !== null) {
+            node.name = renamableNode.newName
+          }
+        })
+        figma.ui.postMessage({ type: 'renamed', count: renamableNodes.length })
+        break
 
-    case 'exit':
-      figma.closePlugin()
-      break
+      case 'exit':
+        figma.closePlugin()
+        break
+    }
   }
 }
