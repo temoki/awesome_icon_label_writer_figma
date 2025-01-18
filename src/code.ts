@@ -15,7 +15,7 @@ function findDescendantsTextNodes(node: SceneNode): TextNode[] {
   if (node.type === 'TEXT') {
     return [node]
   } else if ('children' in node) {
-    var textNodes: TextNode[] = []
+    let textNodes: TextNode[] = []
     for (const child of node.children) {
       textNodes = textNodes.concat(findDescendantsTextNodes(child))
     }
@@ -25,7 +25,7 @@ function findDescendantsTextNodes(node: SceneNode): TextNode[] {
 }
 
 function findAllTextNodesInSelection(): TextNode[] {
-  var textNodes: TextNode[] = []
+  let textNodes: TextNode[] = []
   for (const node of figma.currentPage.selection) {
     textNodes = textNodes.concat(findDescendantsTextNodes(node))
   }
@@ -48,14 +48,14 @@ async function filterRenamableTextNodes(textNodes: TextNode[]): Promise<Result> 
     if (fontFamilySegments.length < 2) continue
     if (!(fontFamilySegments[0] === 'Font' && fontFamilySegments[1] === 'Awesome')) continue
 
-    var fontAwesomeVersion = '?'
+    let fontAwesomeVersion = '?'
     if (fontFamilySegments.length > 2) {
       fontAwesomeVersion = fontFamilySegments[2]
     }
 
     const unicode = textNode.characters.charCodeAt(0).toString(16)
 
-    var iconName = '?'
+    let iconName = '?'
     switch (fontAwesomeVersion) {
       case '5':
         iconName = fa5.get(unicode) ?? iconName
@@ -75,7 +75,7 @@ async function filterRenamableTextNodes(textNodes: TextNode[]): Promise<Result> 
   return result
 }
 
-async function main() {
+(async () => {
   figma.showUI(__html__, {width:300, height: 200})
 
   const isSelectionMode = figma.currentPage.selection.length > 0
@@ -89,7 +89,7 @@ async function main() {
 
   figma.ui.onmessage = async (message) => {
     switch (message.type) {
-      case 'rename':
+      case 'rename': {
         await figma.currentPage.loadAsync()
         const renamableNodes = message.renamableNodes as RenamableNode[]
         renamableNodes.forEach((renamableNode) => {
@@ -100,10 +100,11 @@ async function main() {
         })
         figma.ui.postMessage({ type: 'renamed', count: renamableNodes.length })
         break
+      }
 
       case 'exit':
         figma.closePlugin()
         break
     }
   }
-}
+})()
