@@ -1,6 +1,6 @@
 {
   "name": "awesome_icon_label_writer_figma",
-  "version": "0.7.1",
+  "version": "0.9.0",
   "description": "This Figma plugin renames text nodes containing a single Font Awesome icon to the icon's name.",
   "main": "dist/code.js",
   "scripts": {
