@@ -1,37 +1,25 @@
-// Generate a map with the unicode as the key and the icon name as the value from Font Awesome metadata.
 'use strict';
 const fs = require('fs');
-const https = require('https'); 
 
-function conv(name, url) {
-    https.get(url, (res) => {
-        if (res.statusCode === 302) {
-            // Redirect
-            conv(name, res.headers.location)
-            return
-        }
-
-        if (res.statusCode === 200) {
-            res.setEncoding('utf8')
-            var data = ''
-            res.on('data', (chunk) => data += chunk)
-            res.on('end', () => {
-                const json = JSON.parse(data)
-                var output = `export const icons = new Map<string,string>([`
-                Object.keys(json).forEach((iconName) => {
-                    const unicode = json[iconName].unicode
-                    output += `["${unicode}","${iconName}"],`
-                })
-                output += '])'
-                fs.writeFileSync(`./src/icons_${name}.ts`, output)
-            })
-            return
-        }
-
-        console.log("Status = " + res.statusCode)
-        console.log("Headers = " + res.headers)
-    })
+async function conv(name, url) {
+    const res = await fetch(url);
+    if (!res.ok) {
+        throw new Error(`Failed to fetch ${url}: ${res.status}`);
+    }
+    const json = await res.json();
+    let output = `export const icons = new Map<string,string>([`;
+    for (const iconName of Object.keys(json)) {
+        const unicode = json[iconName].unicode;
+        output += `["${unicode}","${iconName}"],`;
+    }
+    output += '])';
+    fs.writeFileSync(`./src/icons_${name}.ts`, output);
 }
 
-conv("fa6", "https://github.com/FortAwesome/Font-Awesome/raw/6.x/metadata/icons.json")
-conv("fa5", "https://github.com/FortAwesome/Font-Awesome/raw/5.x/metadata/icons.json")
+Promise.all([
+    conv("fa6", "https://github.com/FortAwesome/Font-Awesome/raw/6.x/metadata/icons.json"),
+    conv("fa5", "https://github.com/FortAwesome/Font-Awesome/raw/5.x/metadata/icons.json"),
+]).catch((err) => {
+    console.error(err);
+    process.exit(1);
+});
