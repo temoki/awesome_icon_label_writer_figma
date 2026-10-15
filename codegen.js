@@ -17,6 +17,7 @@ async function conv(name, url) {
 }
 
 Promise.all([
+    conv("fa7", "https://github.com/FortAwesome/Font-Awesome/raw/7.x/metadata/icons.json"),
     conv("fa6", "https://github.com/FortAwesome/Font-Awesome/raw/6.x/metadata/icons.json"),
     conv("fa5", "https://github.com/FortAwesome/Font-Awesome/raw/5.x/metadata/icons.json"),
 ]).catch((err) => {

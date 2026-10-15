@@ -1,5 +1,6 @@
 import { icons as fa5 } from './icons_fa5'
 import { icons as fa6 } from './icons_fa6'
+import { icons as fa7 } from './icons_fa7'
 
 interface RenamableNode {
   nodeId: string
@@ -66,8 +67,12 @@ async function filterRenamableTextNodes(textNodes: TextNode[]): Promise<Result> 
         break
 
       case '6':
-      default:
         iconName = fa6.get(unicode) ?? iconName
+        break
+
+      case '7':
+      default:
+        iconName = fa7.get(unicode) ?? iconName
         break
     }
     const newName = `[FA${fontAwesomeVersion}-${font.style}] ${iconName} / ${unicode}`

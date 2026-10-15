@@ -15,4 +15,4 @@ Here are some examples:
 When you run the plugin, all icons on the current page will be renamed.
 If you select some nodes and then run the plugin, the icons in the selected nodes and their descendants will be renamed.
 
-Supported Font Awesome versions are 5 and 6.
+Supported Font Awesome versions are 5, 6 and 7.
