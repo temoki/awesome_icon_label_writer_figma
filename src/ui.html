@@ -1,156 +1,535 @@
 <style type='text/css'>
+:root {
+    --bg: var(--figma-color-bg, #ffffff);
+    --bg-secondary: var(--figma-color-bg-secondary, #f5f5f5);
+    --bg-hover: var(--figma-color-bg-hover, #f0f0f0);
+    --text: var(--figma-color-text, rgba(0, 0, 0, 0.9));
+    --text-secondary: var(--figma-color-text-secondary, rgba(0, 0, 0, 0.55));
+    --text-tertiary: var(--figma-color-text-tertiary, rgba(0, 0, 0, 0.35));
+    --border: var(--figma-color-border, #e6e6e6);
+    --brand: var(--figma-color-bg-brand, #0d99ff);
+    --brand-hover: var(--figma-color-bg-brand-hover, #007be5);
+    --brand-tint: var(--figma-color-bg-brand-tertiary, #e5f4ff);
+    --text-brand: var(--figma-color-text-brand, #007be5);
+    --on-brand: var(--figma-color-text-onbrand, #ffffff);
+    --success: var(--figma-color-text-success, #14ae5c);
+    --success-tint: var(--figma-color-bg-success-tertiary, #e8f7ee);
+    --warning: var(--figma-color-text-warning, #b86200);
+    --accent: #9747ff;
+
+    --radius: 8px;
+    --ease: cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+* {
+    box-sizing: border-box;
+}
+
+html,
 body {
-    margin: 0px;
-}
-
-p {
-    font: 12px sans-serif;
-    text-align: left;
-    line-height: 1.5em;
-    margin: 0px;
-}
-
-button {
-    border-radius: 4px;
-    font: bold 12px sans-serif;
-    padding: 8px 16px;
-}
-
-.base-container {
-    display: flex;
-    flex-direction: column;
-    gap: 16px;
-    padding-left: 16px;
-    padding-right: 16px;
     height: 100%;
 }
 
-.messages-container {
+body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--text);
+    font: 12px/1.5 Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    -webkit-font-smoothing: antialiased;
+}
+
+p {
+    margin: 0;
+}
+
+.app {
     display: flex;
     flex-direction: column;
-    gap: 4px;
-    margin-top: 16px;
-    margin-bottom: auto;
+    height: 100%;
 }
 
-.actions-container {
+/* Header */
+
+.header {
     display: flex;
-    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
     gap: 8px;
-    margin-top: auto;
-    margin-bottom: 16px;
+    padding: 12px 16px;
+    border-bottom: 1px solid var(--border);
 }
 
-.action-ok {
-    flex: 1;
-    background-color: #0E99FF;
-    color: #FFFFFF;
-    border: 1px solid #0E99FF;
-}
-.action-ok:hover {
-    background-color: #3DAEFF;
-    border: 1px solid #3DAEFF;
+.brand {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-weight: 600;
 }
 
-.action-cancel {
-    flex: 1;
-    background-color: #FFFFFF;
-    color: #0E99FF;
-    border: 1px solid #0E99FF;
+.brand-mark {
+    display: grid;
+    place-items: center;
+    width: 24px;
+    height: 24px;
+    border-radius: 6px;
+    background: linear-gradient(135deg, var(--brand), var(--accent));
+    color: #ffffff;
 }
-.action-cancel:hover {
-    background-color: #F2F2F2;
-    border: 1px solid #3DAEFF;
+
+.scope {
+    padding: 2px 8px;
+    border-radius: 999px;
+    background: var(--bg-secondary);
+    color: var(--text-secondary);
+    font-size: 11px;
+    font-weight: 500;
+    opacity: 0;
+    transition: opacity 0.2s;
+}
+
+.app:not([data-state='loading']) .scope {
+    opacity: 1;
+}
+
+/* Main */
+
+.main {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    min-height: 0;
+}
+
+.panel {
+    display: none;
+    flex: 1;
+    min-height: 0;
+    animation: fade-in 0.3s var(--ease);
+}
+
+.app[data-state='loading'] .panel-loading,
+.app[data-state='found'] .panel-found,
+.app[data-state='empty'] .panel-empty,
+.app[data-state='done'] .panel-done {
+    display: flex;
+}
+
+.panel-center {
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    padding: 24px;
+    text-align: center;
+}
+
+.panel-title {
+    font-size: 13px;
+    font-weight: 600;
+}
+
+.panel-subtitle {
+    max-width: 240px;
+    color: var(--text-secondary);
+}
+
+/* Found */
+
+.panel-found {
+    flex-direction: column;
+}
+
+.summary {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 16px 16px 12px;
+}
+
+.count {
+    font-size: 32px;
+    font-weight: 700;
+    line-height: 1;
+    letter-spacing: -0.02em;
+    font-variant-numeric: tabular-nums;
+    background: linear-gradient(135deg, var(--brand), var(--accent));
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+}
+
+.summary-title {
+    font-weight: 600;
+}
+
+.summary-subtitle {
+    color: var(--text-secondary);
+    font-size: 11px;
+}
+
+.list {
+    flex: 1;
+    min-height: 0;
+    margin: 0;
+    padding: 0 8px 8px;
+    overflow-y: auto;
+    list-style: none;
+}
+
+.row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 6px 8px;
+    border-radius: var(--radius);
+    animation: row-in 0.35s var(--ease) both;
+    animation-delay: calc(var(--i, 0) * 25ms);
+}
+
+.row:hover {
+    background: var(--bg-hover);
+}
+
+.glyph {
+    flex: none;
+    display: grid;
+    place-items: center;
+    width: 40px;
+    height: 28px;
+    border-radius: 6px;
+    background: var(--brand-tint);
+    color: var(--text-brand);
+    font: 500 10px/1 ui-monospace, SFMono-Regular, Menlo, monospace;
+    text-transform: uppercase;
+}
+
+.row-body {
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+}
+
+.row-name {
+    overflow: hidden;
+    font-weight: 500;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+}
+
+.row-name.is-unknown {
+    color: var(--warning);
+}
+
+.row-meta {
+    color: var(--text-tertiary);
+    font-size: 11px;
+}
+
+.list::-webkit-scrollbar {
+    width: 8px;
+}
+
+.list::-webkit-scrollbar-thumb {
+    border: 2px solid var(--bg);
+    border-radius: 999px;
+    background: var(--border);
+}
+
+/* Illustrations */
+
+.illustration {
+    display: grid;
+    place-items: center;
+    width: 56px;
+    height: 56px;
+    border-radius: 50%;
+    background: var(--bg-secondary);
+    color: var(--text-secondary);
+}
+
+.illustration-success {
+    background: var(--success-tint);
+    color: var(--success);
+    animation: pop 0.45s var(--ease);
+}
+
+.check-path {
+    stroke-dasharray: 24;
+    stroke-dashoffset: 24;
+    animation: draw 0.4s 0.15s var(--ease) forwards;
+}
+
+.spinner {
+    width: 24px;
+    height: 24px;
+    border: 2px solid var(--border);
+    border-top-color: var(--brand);
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+}
+
+/* Footer */
+
+.actions {
+    display: flex;
+    gap: 8px;
+    padding: 12px 16px;
+    border-top: 1px solid var(--border);
+}
+
+.app[data-state='loading'] .actions {
+    visibility: hidden;
+}
+
+.button {
+    flex: 1;
+    height: 32px;
+    padding: 0 12px;
+    border: 1px solid transparent;
+    border-radius: 6px;
+    font: inherit;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background-color 0.15s, transform 0.1s;
+}
+
+.button:active {
+    transform: scale(0.98);
+}
+
+.button:focus-visible {
+    outline: 2px solid var(--brand);
+    outline-offset: 1px;
+}
+
+.button:disabled {
+    cursor: default;
+    opacity: 0.6;
+}
+
+.button-primary {
+    background: var(--brand);
+    color: var(--on-brand);
+}
+
+.button-primary:hover:not(:disabled) {
+    background: var(--brand-hover);
+}
+
+.button-secondary {
+    border-color: var(--border);
+    background: transparent;
+    color: var(--text);
+}
+
+.button-secondary:hover:not(:disabled) {
+    background: var(--bg-hover);
+}
+
+.app:not([data-state='found']) .button-secondary {
+    display: none;
+}
+
+/* Animations */
+
+@keyframes fade-in {
+    from { opacity: 0; }
+}
+
+@keyframes row-in {
+    from { opacity: 0; transform: translateY(4px); }
+}
+
+@keyframes pop {
+    0% { transform: scale(0.6); opacity: 0; }
+    60% { transform: scale(1.06); opacity: 1; }
+}
+
+@keyframes draw {
+    to { stroke-dashoffset: 0; }
+}
+
+@keyframes spin {
+    to { transform: rotate(360deg); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+        animation-duration: 0.01ms !important;
+        animation-delay: 0ms !important;
+        transition-duration: 0.01ms !important;
+    }
 }
 </style>
 
-<div class='base-container'>
-    <div class='messages-container'>
-        <p id='message1'></p>
-        <p id='message2'></p>
-    </div>
-    <div class='actions-container'>
-        <button id='cancel' class='action-cancel'>Cancel</button>
-        <button id='ok' class='action-ok'>OK</button>
-    </div>
+<div class='app' id='app' data-state='loading'>
+    <header class='header'>
+        <div class='brand'>
+            <span class='brand-mark'>
+                <svg width='14' height='14' viewBox='0 0 16 16' fill='none' aria-hidden='true'>
+                    <path d='M2 2.75C2 2.34 2.34 2 2.75 2h5.19c.2 0 .39.08.53.22l5.31 5.31c.29.29.29.77 0 1.06l-5.19 5.19a.75.75 0 0 1-1.06 0L2.22 8.47A.75.75 0 0 1 2 7.94V2.75Z' fill='currentColor'/>
+                    <circle cx='5.5' cy='5.5' r='1.25' fill='#9747ff'/>
+                </svg>
+            </span>
+            <span>Icon Label Writer</span>
+        </div>
+        <span class='scope' id='scope'></span>
+    </header>
+
+    <main class='main'>
+        <section class='panel panel-center panel-loading'>
+            <div class='spinner' role='status' aria-label='Scanning'></div>
+            <p class='panel-subtitle'>Looking for Font Awesome icons…</p>
+        </section>
+
+        <section class='panel panel-found'>
+            <div class='summary'>
+                <span class='count' id='count'></span>
+                <div>
+                    <p class='summary-title' id='summary-title'></p>
+                    <p class='summary-subtitle'>Preview of the new layer names</p>
+                </div>
+            </div>
+            <ul class='list' id='list'></ul>
+        </section>
+
+        <section class='panel panel-center panel-empty'>
+            <div class='illustration'>
+                <svg width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='1.75' stroke-linecap='round' aria-hidden='true'>
+                    <circle cx='11' cy='11' r='6.5'/>
+                    <path d='m16 16 4 4'/>
+                </svg>
+            </div>
+            <p class='panel-title'>Nothing to rename</p>
+            <p class='panel-subtitle' id='empty-subtitle'></p>
+        </section>
+
+        <section class='panel panel-center panel-done'>
+            <div class='illustration illustration-success'>
+                <svg width='26' height='26' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2.25' stroke-linecap='round' stroke-linejoin='round' aria-hidden='true'>
+                    <path class='check-path' d='m5 12.5 4.5 4.5L19 7.5'/>
+                </svg>
+            </div>
+            <p class='panel-title' id='done-title'></p>
+            <p class='panel-subtitle'>Each layer is now named after its icon.</p>
+        </section>
+    </main>
+
+    <footer class='actions'>
+        <button id='cancel' class='button button-secondary'>Cancel</button>
+        <button id='ok' class='button button-primary'>OK</button>
+    </footer>
 </div>
 
 <script>
-    var lastPluginMessage = { type: 'none' }
+    const app = document.getElementById('app')
+    const scope = document.getElementById('scope')
+    const count = document.getElementById('count')
+    const summaryTitle = document.getElementById('summary-title')
+    const list = document.getElementById('list')
+    const emptySubtitle = document.getElementById('empty-subtitle')
+    const doneTitle = document.getElementById('done-title')
+    const okButton = document.getElementById('ok')
+    const cancelButton = document.getElementById('cancel')
 
-    document.getElementById('ok').onclick = () => {
-        switch (lastPluginMessage.type) {
-            case 'renamable-nodes-found':
-                if (lastPluginMessage.renamableNodes.length > 0) {
-                    parent.postMessage({ pluginMessage: { type: 'rename', renamableNodes: lastPluginMessage.renamableNodes } }, '*')
-                } else {
-                    parent.postMessage({ pluginMessage: { type: 'exit' } }, '*')
-                }
-                break
+    let renamableNodes = []
 
-            case 'renamed':
-                parent.postMessage({ pluginMessage: { type: 'exit' } }, '*')
-                break
+    const plural = (n, singular, plural) => (n === 1 ? singular : plural)
 
-            default:
+    const post = (pluginMessage) => parent.postMessage({ pluginMessage }, '*')
+
+    function createRow(node, index) {
+        const row = document.createElement('li')
+        row.className = 'row'
+        row.title = node.newName
+        row.style.setProperty('--i', Math.min(index, 16))
+
+        const glyph = document.createElement('span')
+        glyph.className = 'glyph'
+        glyph.textContent = node.unicode
+
+        const body = document.createElement('span')
+        body.className = 'row-body'
+
+        const name = document.createElement('span')
+        const isUnknown = node.iconName === '?'
+        name.className = isUnknown ? 'row-name is-unknown' : 'row-name'
+        name.textContent = isUnknown ? 'Unknown icon' : node.iconName
+
+        const meta = document.createElement('span')
+        meta.className = 'row-meta'
+        meta.textContent = `FA${node.version} · ${node.style}`
+
+        body.append(name, meta)
+        row.append(glyph, body)
+        return row
+    }
+
+    function showFound(message) {
+        renamableNodes = message.renamableNodes
+        const n = renamableNodes.length
+        const target = message.isSelectionMode ? 'selection' : 'current page'
+        scope.textContent = message.isSelectionMode ? 'Selection' : 'Current page'
+
+        if (n === 0) {
+            emptySubtitle.textContent = `No unlabeled Font Awesome icons were found in the ${target}.`
+            okButton.textContent = 'Close'
+            app.dataset.state = 'empty'
+        } else {
+            count.textContent = n
+            summaryTitle.textContent = `${plural(n, 'icon', 'icons')} found in the ${target}`
+            list.replaceChildren(...renamableNodes.map(createRow))
+            okButton.textContent = `Rename ${n} ${plural(n, 'layer', 'layers')}`
+            app.dataset.state = 'found'
+        }
+        okButton.focus()
+    }
+
+    function showRenamed(message) {
+        const n = message.count
+        doneTitle.textContent = `${n} ${plural(n, 'layer', 'layers')} renamed`
+        okButton.textContent = 'Done'
+        okButton.disabled = false
+        app.dataset.state = 'done'
+        okButton.focus()
+    }
+
+    okButton.onclick = () => {
+        if (app.dataset.state === 'found') {
+            okButton.disabled = true
+            cancelButton.disabled = true
+            okButton.textContent = 'Renaming…'
+            post({ type: 'rename', renamableNodes })
+        } else if (app.dataset.state !== 'loading') {
+            post({ type: 'exit' })
         }
     }
 
-    document.getElementById('cancel').onclick = () => {
-        parent.postMessage({ pluginMessage: { type: 'exit' } }, '*')
-    }
+    cancelButton.onclick = () => post({ type: 'exit' })
+
+    document.addEventListener('keydown', (event) => {
+        if (event.key === 'Escape') {
+            post({ type: 'exit' })
+        }
+    })
 
     onmessage = (event) => {
-        const message1Text = document.getElementById('message1')
-        const message2Text = document.getElementById('message2')
-        const okButton = document.getElementById('ok')
-        const cancelButton = document.getElementById('cancel')
-
         const pluginMessage = event.data.pluginMessage
+        if (!pluginMessage) return
+
         switch (pluginMessage.type) {
             case 'renamable-nodes-found':
-                const foundCount = pluginMessage.renamableNodes.length
-                const target = pluginMessage.isSelectionMode ? 'selection' : 'current page'
-
-                if (foundCount >= 2) {
-                    message1Text.innerHTML = `<strong>${pluginMessage.renamableNodes.length}</strong> text nodes consisting of one Font Awesome icon were found in the ${target}.`
-                    message2Text.style.display = 'inline'
-                    message2Text.innerHTML += 'Are you sure you want to change these nodes name to the icon name?'
-                    okButton.innerText = 'Change'
-                } else if (foundCount == 1) {
-                    message1Text.innerHTML = `One text node consisting of one Font Awesome icon was found in the ${target}.`
-                    message2Text.style.display = 'inline'
-                    message2Text.innerHTML += 'Are you sure you want to change the node name to the icon name?'
-                    okButton.innerText = 'Change'
-                } else {
-                    message1Text.innerHTML = `No text nodes consisting of one Font Awesome icon were found in the ${target}.`
-                    message2Text.style.display = 'none'
-                    message2Text.innerHTML = ''
-                    okButton.innerText = 'OK'
-                }
-
-                okButton.style.visibility = 'visible'
-                cancelButton.style.display = (foundCount > 0) ? 'inline' : 'none'
+                showFound(pluginMessage)
                 break
 
             case 'renamed':
-                const renamedCount = pluginMessage.count
-                if (renamedCount >= 2) {
-                    message1Text.innerHTML = `<strong>${pluginMessage.count}</strong> text nodes have been renamed.`
-                } else if (renamedCount == 1) {
-                    message1Text.innerHTML = 'One text node has been renamed.'
-                } else {
-                    message1Text.innerHTML = 'No text nodes have been renamed.'
-                }
-                message2Text.style.visibility = 'hidden'
-                message2Text.innerHTML = ''
-                okButton.innerText = 'OK'
-                okButton.style.display = 'inline'
-                cancelButton.style.display = 'none'
+                showRenamed(pluginMessage)
                 break
 
             default:
         }
-        lastPluginMessage = pluginMessage
     }
 </script>

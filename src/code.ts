@@ -4,6 +4,10 @@ import { icons as fa6 } from './icons_fa6'
 interface RenamableNode {
   nodeId: string
   newName: string
+  version: string
+  style: string
+  iconName: string
+  unicode: string
 }
 
 interface Result {
@@ -70,13 +74,20 @@ async function filterRenamableTextNodes(textNodes: TextNode[]): Promise<Result> 
     if (textNode.name === newName) continue
 
     result.focusNodes.push(textNode)
-    result.renamableNodes.push({ nodeId: textNode.id, newName: newName })
+    result.renamableNodes.push({
+      nodeId: textNode.id,
+      newName: newName,
+      version: fontAwesomeVersion,
+      style: font.style,
+      iconName: iconName,
+      unicode: unicode,
+    })
   }
   return result
 }
 
 (async () => {
-  figma.showUI(__html__, {width:300, height: 200})
+  figma.showUI(__html__, { width: 320, height: 420, themeColors: true })
 
   const isSelectionMode = figma.currentPage.selection.length > 0
   const textNodes = isSelectionMode ? findAllTextNodesInSelection() : await findAllTextNodesInCurrentPage()
